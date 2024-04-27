@@ -1,0 +1,196 @@
+// my secure coding review used ktline languge it came from LE spam app from git hub link for app 
+https://github.com/simondankelmann/Bluetooth-LE-Spam 
+
+vunlarbilties found in those codes 
+
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("androidx.navigation.safeargs")
+    id("kotlin-kapt")
+}
+
+val app_name = "Bluetooth LE Spam"
+
+android {
+    namespace = "de.simon.dankelmann.bluetoothlespam"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "de.simon.dankelmann.bluetoothlespam"
+        minSdk = 26
+        targetSdk = 34
+        versionCode = 2
+        versionName = "1.0.8"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            resValue("string", "app_name", app_name)
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            resValue("string", "app_name", "$app_name Debug")
+            applicationIdSuffix = ".debug"
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+    buildFeatures {
+        viewBinding = true
+    }
+}
+
+
+dependencies {
+    implementation("com.airbnb.android:lottie:6.1.0")
+    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.10.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation("androidx.preference:preference:1.2.1")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation("androidx.preference:preference-ktx:1.2.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+
+    val room_version = "2.6.0"
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+
+    // To use Kotlin annotation processing tool (kapt)
+    kapt("androidx.room:room-compiler:$room_version")
+
+    // To use Kotlin Symbol Processing (KSP)
+    //ksp("androidx.room:room-compiler:$room_version")
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+    //implementation("androidx.room:room-ktx:$room_version")
+
+    // optional - RxJava2 support for Room
+    //implementation("androidx.room:room-rxjava2:$room_version")
+
+    // optional - RxJava3 support for Room
+    implementation("androidx.room:room-rxjava3:$room_version")
+
+    // optional - Guava support for Room, including Optional and ListenableFuture
+    //implementation("androidx.room:room-guava:$room_version")
+
+    // optional - Test helpers
+    //testImplementation("androidx.room:room-testing:$room_version")
+
+    // optional - Paging 3 Integration
+    //implementation("androidx.room:room-paging:$room_version")
+
+} 
+
+
+
+
+some sugesutions for securing it are :
+
+
+
+1. *Application ID and Namespace*:
+   - The applicationId and namespace should be carefully chosen to avoid conflicts with other apps and namespaces. Ensure uniqueness and avoid using generic names.
+   - Consider using a more descriptive and unique namespace for your app.
+
+2. *Minification and Proguard*:
+   - You've disabled minification (isMinifyEnabled = false) in the release build type. Minification obfuscates code and reduces the risk of reverse engineering.
+   - However, consider enabling minification and ensure that Proguard rules are properly configured to keep necessary classes and resources while obfuscating others.
+
+3. *Kotlin and Java Versions*:
+   - You're using Kotlin with Java 17 compatibility. This is good, but ensure that your codebase adheres to secure coding practices for both languages.
+   - Keep an eye on language-specific security updates.
+
+4. *Dependencies*:
+   - Regularly review and update dependencies to address security vulnerabilities.
+   - Consider using dependency scanning tools (e.g., Snyk, OWASP Dependency-Check) to identify vulnerable libraries.
+
+5. *Room Database*:
+   - You're using Room for database operations, which is great!
+   - Ensure that your database queries are parameterized to prevent SQL injection.
+   - Review your data access objects (DAOs) for proper validation and error handling.
+
+6. *Coroutines*:
+   - Using Kotlin coroutines (kotlinx-coroutines-android) is a good practice for asynchronous operations.
+   - Ensure proper exception handling and cancellation.
+
+7. *Test Dependencies*:
+   - Keep your test dependencies up-to-date.
+   - Write unit tests and integration tests to validate your code.
+
+8. *Navigation Component*:
+   - You're using the Navigation Component (androidx.navigation) for navigation.
+   - Ensure that navigation paths are secure and don't expose sensitive data.
+
+9. *View Binding*:
+   - Enabling view binding (buildFeatures.viewBinding = true) simplifies view access and reduces the risk of null pointer exceptions.
+
+10. *Secrets Management*:
+    - Avoid hardcoding sensitive information (e.g., API keys, passwords) directly into the code. Use environment variables or secret management tools.
+
+
+and some codes examples to secure it are :
+
+1.Namespace and Application ID:
+Choose a unique and descriptive namespace and applicationId to avoid conflicts with other apps.
+Update your code like this: android {
+    namespace = "com.example.myapp" // Replace with your desired namespace
+    defaultConfig {
+        applicationId = "com.example.myapp" // Replace with your desired application ID
+        // ...
+    }
+}
+
+2.Minification and Proguard:
+Enable minification to obfuscate code in the release build type.
+Add Proguard rules to retain necessary classes: 
+android {
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        // ...
+    }
+}
+
+3.Room Database:
+Ensure that your database queries are parameterized to prevent SQL injection.
+Example of a safe query:
+
+@Query("SELECT * FROM users WHERE id = :userId")
+fun getUserById(userId: Int): User
+
+4.Coroutines:
+Handle exceptions properly in your coroutines:
+
+viewModelScope.launch {
+    try {
+        // Your asynchronous code here
+    } catch (e: Exception) {
+        // Handle the exception
+    }
+}
